@@ -120,4 +120,5 @@ if [[ -n $(lspci | grep -i nvidia) ]]; then
         sudo bash ./misc/NVIDIA-Linux-x86_64-*.run
     fi
 fi
+
 spatialPrint "script finished!"
