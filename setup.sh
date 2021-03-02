@@ -21,23 +21,43 @@ execute () {
     fi
 }
 
-spatialPrint "update and upgrade"
-execute sudo apt-get update -y
-sudo apt-get dist-upgrade -y
-sudo apt-get install ubuntu-restricted-extras -y
+PIP="pip3 install --user"
+APT="sudo apt-get -y"
 
-spatialPrint "basic installs"
-execute sudo apt-get install build-essential libboost-all-dev -y
-execute sudo apt-get install git wget curl -y
-execute sudo apt-get install gimp -y
-execute sudo apt-get install gnome-tweak-tool -y
-execute sudo apt-get install gnome-shell-extensions -y
-execute sudo apt-get install libhdf5-dev exiftool ffmpeg -y
+spatialPrint "system update and upgrade"
+execute $APT update
+$APT dist-upgrade
+$APT install ubuntu-restricted-extras
 
-spatialPrint "zsh + zim"
+spatialPrint "basic installation"
+execute $APT install build-essential libboost-all-dev libhdf5-dev pkg-config libglvnd-dev
+execute $APT install gimp ffmpeg
+execute $APT install python3 python3-dev
+execute $APT install python3-pip python3-venv
+
+spatialPrint "bat >>>> cat"
+bat_setup=$(curl --silent "https://api.github.com/repos/sharkdp/bat/releases/latest" | grep "deb" | grep "browser_download_url" | head -n 1 | cut -d \" -f 4)
+wget -q $bat_setup -O /tmp/bat.deb
+execute sudo dpkg -i /tmp/bat.deb
+execute sudo apt-get install -f
+
+spatialPrint "advanced copy (mod)"
+wget -q http://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz -O coreutils.tar.xz
+tar xJf coreutils.tar.xz && mv coreutils-8.32 coreutils/
+cd coreutils/
+wget -q https://raw.githubusercontent.com/jarun/advcpmv/master/advcpmv-0.8-8.32.patch
+patch -p1 -i advcpmv-0.8-8.32.patch
+execute ./configure
+execute make
+sudo cp -f src/cp /usr/local/bin/cp
+sudo cp -f src/mv /usr/local/bin/mv
+cd ../
+rm -rf ./coreutils*
+
+spatialPrint "zimfw (zsh + zim)"
 rm -rf ~/.z*
 sudo rm -rf /opt/.zsh/
-execute sudo apt-get install zsh -y
+execute $APT install zsh
 sudo mkdir -p /opt/.zsh/ && sudo chmod ugo+w /opt/.zsh/
 export ZIM_HOME=/opt/.zsh/zim
 curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
@@ -47,77 +67,69 @@ cp ./.zshrc ~/.zshrc
 cp ./.bash_aliases /opt/.zsh/bash_aliases
 ln -sf /opt/.zsh/bash_aliases ~/.bash_aliases
 
-spatialPrint "vim (neovim)"
-execute sudo apt-get install vim-gui-common vim-runtime -y
-execute sudo apt-get install neovim python3-neovim -y
-rm -rf ~/.config/nvim/
-mkdir ~/.config/nvim/
+spatialPrint "VIM (neovim)"
+execute $APT install vim neovim python3-neovim
+execute $PIP install pynvim
+execute $APT install nodejs npm exuberant-ctags
+# copy config files
+if [ ! -d ~/.config/nvim/ ]; then
+    mkdir ~/.config/nvim/
+fi
 cp ./.config/nvim/init.vim ~/.config/nvim/
 
-spatialPrint "bat >> cat"
-latest_bat_setup=$(curl --silent "https://api.github.com/repos/sharkdp/bat/releases/latest" | grep "deb" | grep "browser_download_url" | head -n 1 | cut -d \" -f 4)
-wget -q $latest_bat_setup -O /tmp/bat.deb
-execute sudo dpkg -i /tmp/bat.deb
-execute sudo apt-get install -f
-
-spatialPrint "browsers"
+spatialPrint "web browser"
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-execute sudo apt-get update  -y
-execute sudo apt-get install google-chrome-stable -y
-execute sudo apt-get install firefox -y
+execute $APT update
+execute $APT install google-chrome-stable
+execute $APT install firefox
 
 spatialPrint "screen recorder"
 execute sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder -y
-execute sudo apt-get update
-execute sudo apt-get install simplescreenrecorder -y
+execute $APT update
+execute $APT install simplescreenrecorder
 
-if ! which docker > /dev/null; then
-    spatialPrint "docker"
-    wget -q get.docker.com -O dockerInstall.sh
-    chmod +x dockerInstall.sh
-    execute ./dockerInstall.sh
-    rm dockerInstall.sh
-    sudo usermod -aG docker ${USER}
-fi
+spatialPrint "docker"
+wget -q get.docker.com -O dockerInstall.sh
+chmod +x dockerInstall.sh
+execute ./dockerInstall.sh
+rm dockerInstall.sh
+sudo usermod -aG docker ${USER}
 
 spatialPrint "communication"
-latest_slack_setup=$(curl --silent https://slack.com/intl/en-in/downloads/linux | sed -n "/^.*Version /{;s///;s/[^0-9.].*//p;q;}")
-wget -q https://downloads.slack-edge.com/linux_releases/slack-desktop-${latest_slack_setup}-amd64.deb
-execute sudo apt-get install ./slack-desktop-*.deb -y
+slack_setup=$(curl --silent https://slack.com/intl/en-in/downloads/linux | sed -n "/^.*Version /{;s///;s/[^0-9.].*//p;q;}")
+wget -q https://downloads.slack-edge.com/linux_releases/slack-desktop-${slack_setup}-amd64.deb
+execute $APT install ./slack-desktop-*.deb
 rm ./slack-desktop-*.deb
 wget -q "https://discordapp.com/api/download?platform=linux&format=deb" -O ./discord.deb
-execute sudo apt-get install ./discord.deb -y
+execute $APT install ./discord.deb
 rm ./discord.deb
 
 spatialPrint "remote-desktop"
 wget -q https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
-execute sudo apt-get install ./teamviewer_amd64.deb -y
+execute $APT install ./teamviewer_amd64.deb
 rm ./teamviewer_amd64.deb
 wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | sudo apt-key add -
 echo "deb http://deb.anydesk.com/ all main" | sudo tee /etc/apt/sources.list.d/anydesk-stable.list
-execute sudo apt-get update -y
-execute sudo apt-get install anydesk -y
+execute $APT update
+execute $APT install anydesk
 
 spatialPrint "latex"
-execute sudo apt-get install texlive-full -y
+execute $APT install texlive-full
 
-spatialPrint "python"
-execute sudo apt-get install python3 python3-dev -y
-execute sudo apt-get install python3-pip python3-venv -y
-PIP="pip3 install --user"
+spatialPrint "python packages"
 execute $PIP numpy matplotlib pandas seaborn
 execute $PIP wandb
 execute $PIP opencv-python opencv-contrib-python nltk librosa==0.7.2 numba==0.48
-execute sudo apt-get install magic-wormhole -y
+execute $APT install magic-wormhole
 
 if [[ -n $(lspci | grep -i nvidia) ]]; then
     spatialPrint "nvidia gpu drivers (https://www.nvidia.in/Download/index.aspx?lang=en-in)"
     read -p "proceed? y(yes) / s(skip): " tempvar
     tempvar=${tempvar:-s}
     if [ "$tempvar" = "y" ]; then
-        mv ~/Downloads/NVIDIA-Linux-x86_64-*.run ./misc/
-        sudo bash ./misc/NVIDIA-Linux-x86_64-*.run
+        mv ~/Downloads/NVIDIA-Linux-x86_64-*.run ./misc/nvidia.run
+        sudo bash ./misc/nvidia.run
     fi
 fi
 

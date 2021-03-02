@@ -94,14 +94,14 @@ if which nvidia-smi > /dev/null; then
     execute sudo systemctl restart docker
 fi
 
-spatialPrint "pytorch"
+spatialPrint "pytorch install"
 PIP="pip3 install --user"
-read -p "pytorch (https://pytorch.org/get-started/locally/) d(default) / c(custom) / s(skip): " tempvar
+read -p "(https://pytorch.org/get-started/locally/) d(default) / c(custom) / s(skip): " tempvar
 tempvar=${tempvar:-s}
 if [ "$tempvar" = "d" ]; then
     execute $PIP torch torchvision torchaudio
 elif [ "$tempvar" = "c" ]; then
-    read -p "pip3 install --user < > " tempvar
+    read -p "pip3 install --user " tempvar
     execute $PIP $tempvar
 fi
 
