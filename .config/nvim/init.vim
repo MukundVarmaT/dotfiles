@@ -72,7 +72,7 @@ let g:netrw_banner = 0 " remove top banner
 let g:netrw_liststyle = 3 " tree view
 set autochdir " change directory to current buffer
 " ignore files
-let g:netrw_list_hide = '^\.\.\=/\=$,.git,__pycache__,venv,*\.o,*\.pyc,.*\.swp'
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+,__pycache__,venv'
 
 " open netrw on startup
 autocmd VimEnter * if expand("%") == "" | :Ex | endif

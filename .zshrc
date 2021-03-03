@@ -106,14 +106,10 @@ function extract() {
         ;;
     esac
 }
-if [ -f ~/.bash_aliases ]; then
-  source ~/.bash_aliases
-fi
-# Switching to 256-bit colour by default so that zsh-autosuggestion's suggestions are not suggested in white, but in grey instead
-export TERM=xterm-256color
-# Setting the default text editor to micro, a terminal text editor with shortcuts similar to what you'd encounter in an IDE
-export VISUAL=micro
+
 # cuda
 export PATH=/usr/local/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 export CUDA_HOME=/usr/local/cuda
+
+
