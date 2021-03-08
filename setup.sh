@@ -75,6 +75,7 @@ ln -sf /opt/.zsh/bash_aliases ~/.bash_aliases
 spatialPrint "VIM (neovim)"
 execute $APT install vim neovim python3-neovim
 execute $PIP install pynvim
+curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
 execute $APT install nodejs npm exuberant-ctags
 if [ ! -d ~/.config/nvim/ ]; then
     mkdir ~/.config/nvim/

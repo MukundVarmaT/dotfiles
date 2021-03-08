@@ -6,7 +6,7 @@ filetype plugin on
 " check if vim-plug exists; if not, install
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    autocmd VimEnter * PlugInstall --sync | source ~/.config/nvim/init.vim | CocInstall coc-python
+    autocmd VimEnter * PlugInstall --sync | source ~/.config/nvim/init.vim | CocInstall coc-pyright
 endif
 
 " all plugins
@@ -68,7 +68,7 @@ autocmd BufWritePre * :call CleanExtraSpaces()
 
 " netrw
 
-let g:netrw_banner = 0 " remove top banner
+" let g:netrw_banner = 0 " remove top banner
 let g:netrw_liststyle = 3 " tree view
 set autochdir " change directory to current buffer
 " ignore files
