@@ -29,7 +29,8 @@ if which nvidia-smi > /dev/null; then
 
     if [ "$tempvar" = "y" ]; then
         if [[ ! $(command -v nvcc -V) ]]; then
-            read -p "cuda link (https://developer.nvidia.com/cuda-toolkit-archive): " cuda_link
+            spatialPrint "Installing CUDA"
+            read -p "Archive link (https://developer.nvidia.com/cuda-toolkit-archive) [default - https://developer.nvidia.com/cuda-10.1-download-archive-update2]: " cuda_link
             cuda_link=${cuda_link:-"https://developer.nvidia.com/cuda-10.1-download-archive-update2"}
 
             cuda_instr_block=$(wget -q -O - $cuda_link | grep wget | head -n 1)
@@ -48,8 +49,8 @@ if which nvidia-smi > /dev/null; then
         fi
 
         if [ ! -f "/usr/local/cuda/include/cudnn.h" ]; then
-            spatialPrint "cudnn"
-            read -p "version (https://developer.nvidia.com/rdp/cudnn-download): " version
+            spatialPrint "Setting up CUDNN"
+            read -p "Download before proceeding (https://developer.nvidia.com/rdp/cudnn-download). Downloaded version [default: 7.6.5]: " version
             version=${version:-"7.6.5"}
             v=$(printf %.1s "$version")
             if [ ! -f ./misc/cudnn.tgz ]; then
@@ -94,7 +95,7 @@ if which nvidia-smi > /dev/null; then
     execute sudo systemctl restart docker
 fi
 
-spatialPrint "pytorch install"
+spatialPrint "Install pytorch"
 PIP="pip3 install --user"
 read -p "(https://pytorch.org/get-started/locally/) d(default) / c(custom) / s(skip): " tempvar
 tempvar=${tempvar:-s}
@@ -104,5 +105,7 @@ elif [ "$tempvar" = "c" ]; then
     read -p "pip3 install --user " tempvar
     execute $PIP $tempvar
 fi
+spatialPrint "Check pytorch installation"
+python3 ./test_torch.py
 
 spatialPrint "script finished!"

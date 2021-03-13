@@ -30,10 +30,11 @@ $APT dist-upgrade
 $APT install ubuntu-restricted-extras
 
 spatialPrint "basic installation"
-execute $APT install build-essential libboost-all-dev libhdf5-dev pkg-config libglvnd-dev
+execute $APT install build-essential libboost-all-dev libhdf5-dev pkg-config libglvnd-dev node-typescript
 execute $APT install gimp ffmpeg
 execute $APT install python3 python3-dev
 execute $APT install python3-pip python3-venv
+execute $APT install htop magic-wormhole gnome-shell-extension-system-monitor gnome-tweaks
 
 if [[ ! -n $(command -v bat) ]]; then
     spatialPrint "bat >>>> cat"
@@ -81,6 +82,11 @@ if [ ! -d ~/.config/nvim/ ]; then
     mkdir ~/.config/nvim/
 fi
 cp ./.config/nvim/init.vim ~/.config/nvim/
+
+spatialPrint "tiling window manager"
+git clone --quiet https://github.com/pop-os/shell ./misc/window-manager/
+cd ./misc/window-manager/
+make local-install
 
 if [[ ! (-n $(command -v google-chrome) && -n $(command -v firefox)) ]]; then
     spatialPrint "web browser"
@@ -140,7 +146,6 @@ spatialPrint "python packages"
 execute $PIP numpy matplotlib pandas seaborn
 execute $PIP wandb
 execute $PIP opencv-python opencv-contrib-python nltk librosa==0.7.2 numba==0.48
-execute $APT install magic-wormhole
 
 if [[ -n $(lspci | grep -i nvidia) ]]; then
     spatialPrint "nvidia gpu detected! download from (https://www.nvidia.in/Download/index.aspx?lang=en-in)"
