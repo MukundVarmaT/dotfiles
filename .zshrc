@@ -113,4 +113,4 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:
 export CUDA_HOME=/usr/local/cuda
 
 # data directory
-export DATA=/data/
+export DATA=/media/sneezygiraffe/33cfbf1e-16c6-405a-91f2-89c3be66b7cc

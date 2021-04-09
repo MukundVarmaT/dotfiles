@@ -30,7 +30,7 @@ $APT dist-upgrade
 $APT install ubuntu-restricted-extras
 
 spatialPrint "basic installation"
-execute $APT install build-essential libboost-all-dev libhdf5-dev pkg-config libglvnd-dev node-typescript
+execute $APT install build-essential libboost-all-dev libhdf5-dev pkg-config libglvnd-dev node-typescript wget git curl
 execute $APT install gimp ffmpeg
 execute $APT install python3 python3-dev
 execute $APT install python3-pip python3-venv
@@ -77,16 +77,11 @@ spatialPrint "VIM (neovim)"
 execute $APT install vim neovim python3-neovim
 execute $PIP install pynvim
 curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-execute $APT install nodejs npm exuberant-ctags
+execute $APT install nodejs exuberant-ctags
 if [ ! -d ~/.config/nvim/ ]; then
     mkdir ~/.config/nvim/
 fi
 cp ./.config/nvim/init.vim ~/.config/nvim/
-
-spatialPrint "tiling window manager"
-git clone --quiet https://github.com/pop-os/shell ./misc/window-manager/
-cd ./misc/window-manager/
-make local-install
 
 if [[ ! (-n $(command -v google-chrome) && -n $(command -v firefox)) ]]; then
     spatialPrint "web browser"

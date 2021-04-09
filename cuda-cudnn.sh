@@ -21,6 +21,19 @@ execute () {
     fi
 }
 
+if [[ -n $(echo $SHELL | grep "zsh") ]] ; then
+    SHELLRC=~/.zshrc
+elif [[ -n $(echo $SHELL | grep "bash") ]] ; then
+    SHELLRC=~/.bashrc
+else
+    echo "unidentified shell $SHELL"
+    exit
+fi
+
+if [[ ! -d "misc" ]]; then
+    mkdir misc
+fi
+
 # if nvidia drivers are installed
 if which nvidia-smi > /dev/null; then
     spatialPrint "nvidia drivers succesfully installed!"
@@ -42,10 +55,10 @@ if which nvidia-smi > /dev/null; then
         fi
 
         if [[ (! -n $(echo $PATH | grep 'cuda')) && ( -d "/usr/local/cuda" ) ]]; then
-            echo "# cuda" >> ~/.zshrc
-            echo "export PATH=/usr/local/cuda/bin:\$PATH" >> ~/.zshrc
-            echo "export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:\$LD_LIBRARY_PATH" >> ~/.zshrc
-            echo "export CUDA_HOME=/usr/local/cuda" >> ~/.zshrc
+            echo "# cuda" >> $SHELLRC
+            echo "export PATH=/usr/local/cuda/bin:\$PATH" >> $SHELLRC
+            echo "export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:\$LD_LIBRARY_PATH" >> $SHELLRC
+            echo "export CUDA_HOME=/usr/local/cuda" >> $SHELLRC
         fi
 
         if [ ! -f "/usr/local/cuda/include/cudnn.h" ]; then
