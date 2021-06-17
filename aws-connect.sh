@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CACHE="misc/.aws-save.txt"
+CACHE="$HOME/dotfiles/misc/.aws-save.txt"
 
 if [ ! -f $CACHE ]; then
     echo '' > $CACHE
@@ -32,4 +32,4 @@ for key in "${!key_dict[@]}"; do
     echo "$key|${key_dict[$key]}"
 done > $CACHE
 
-ssh -i "misc/aws-pem/$pem_file.pem" "ubuntu@$ip"
+ssh -i "$HOME/dotfiles/misc/aws-pem/$pem_file.pem" "ubuntu@$ip"

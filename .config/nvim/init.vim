@@ -11,18 +11,16 @@ endif
 
 " all plugins
 call plug#begin("~/.vim/plugged")
-
     Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'} " python syntax highlight
     Plug 'jiangmiao/auto-pairs' " insert or delete brackets, quotes in pairs
     Plug 'neoclide/coc.nvim', {'branch': 'release'} " completion
     Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' } " PEP8 indentation rules
-    Plug 'tomasiser/vim-code-dark' " colorscheme
+    Plug 'neozenith/estilo-xoria256'
     Plug 'mg979/vim-visual-multi', {'branch': 'master'} " multi-cursor support
     Plug 'frazrepo/vim-rainbow' " rainbow colored brackets
     Plug 'tpope/vim-commentary' " comments
     Plug 'preservim/tagbar' " find tags in current file
     Plug 'nathanaelkane/vim-indent-guides' " indentation level guides
-
 call plug#end()
 
 set encoding=UTF-8
@@ -37,6 +35,13 @@ set noswapfile " remove swap files
 autocmd TermOpen * setlocal nonu " no linenumbers for terminal
 set splitright
 set splitbelow
+" augroup VertMarker
+"     autocmd!
+"     autocmd FileType python highlight Excess ctermbg=DarkGrey guibg=Black
+"     autocmd FileType python match Excess /\%81v.*/
+"     autocmd FileType python set nowrap
+"     autocmd FileType python set colorcolumn=80
+" augroup END
 
 " autoload init.vim on save
 autocmd BufWritePost init.vim source .config/nvim/init.vim
@@ -194,7 +199,7 @@ let g:indent_guides_guide_size = 1
 
 " colorscheme
 set background=dark
-colorscheme codedark
+colorscheme xoria256
 
 " tab colors
 highlight TabLineFill guifg=Black guibg=#EBCB8B

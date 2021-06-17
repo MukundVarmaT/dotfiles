@@ -114,3 +114,7 @@ export CUDA_HOME=/usr/local/cuda
 
 # data directory
 export DATA=/media/sneezygiraffe/33cfbf1e-16c6-405a-91f2-89c3be66b7cc
+# Install Ruby Gems to ~/gems
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"
