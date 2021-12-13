@@ -16,7 +16,7 @@ execute () {
     if [ $? -ne 0 ]; then
         echo "$OUTPUT"
         echo ""
-        echo "Failed to Execute $*" >&2
+        echo "failed to execute $*" >&2
         exit 1
     fi
 }
@@ -35,29 +35,6 @@ execute $APT install gimp ffmpeg
 execute $APT install python3 python3-dev
 execute $APT install python3-pip python3-venv
 execute $APT install htop magic-wormhole gnome-shell-extension-system-monitor gnome-tweaks
-
-if [[ ! -n $(command -v bat) ]]; then
-    spatialPrint "bat >>>> cat"
-    bat_setup=$(curl --silent "https://api.github.com/repos/sharkdp/bat/releases/latest" | grep "deb" | grep "browser_download_url" | head -n 1 | cut -d \" -f 4)
-    wget -q $bat_setup -O /tmp/bat.deb
-    execute sudo dpkg -i /tmp/bat.deb
-    execute sudo apt-get install -f
-fi
-
-if [[ ! -n $(command -v cp -g) ]]; then
-    spatialPrint "advanced copy (mod)"
-    wget -q http://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz -O coreutils.tar.xz
-    tar xJf coreutils.tar.xz && mv coreutils-8.32 coreutils/
-    cd coreutils/
-    wget -q https://raw.githubusercontent.com/jarun/advcpmv/master/advcpmv-0.8-8.32.patch
-    patch -p1 -i advcpmv-0.8-8.32.patch
-    execute ./configure
-    execute make
-    sudo cp -f src/cp /usr/local/bin/cp
-    sudo cp -f src/mv /usr/local/bin/mv
-    cd ../
-    rm -rf ./coreutils*
-fi
 
 # clear existing installation if present
 spatialPrint "zimfw (zsh + zim)"

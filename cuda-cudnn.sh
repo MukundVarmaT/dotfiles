@@ -16,7 +16,7 @@ execute () {
     if [ $? -ne 0 ]; then
         echo "$OUTPUT"
         echo ""
-        echo "Failed to Execute $*" >&2
+        echo "failed to execute $*" >&2
         exit 1
     fi
 }
@@ -42,8 +42,8 @@ if which nvidia-smi > /dev/null; then
 
     if [ "$tempvar" = "y" ]; then
         if [[ ! $(command -v nvcc -V) ]]; then
-            spatialPrint "Installing CUDA"
-            read -p "Archive link (https://developer.nvidia.com/cuda-toolkit-archive) [default - https://developer.nvidia.com/cuda-10.1-download-archive-update2]: " cuda_link
+            spatialPrint "installing CUDA"
+            read -p "archive link (https://developer.nvidia.com/cuda-toolkit-archive) [default - https://developer.nvidia.com/cuda-10.1-download-archive-update2]: " cuda_link
             cuda_link=${cuda_link:-"https://developer.nvidia.com/cuda-10.1-download-archive-update2"}
 
             cuda_instr_block=$(wget -q -O - $cuda_link | grep wget | head -n 1)
@@ -62,8 +62,8 @@ if which nvidia-smi > /dev/null; then
         fi
 
         if [ ! -f "/usr/local/cuda/include/cudnn.h" ]; then
-            spatialPrint "Setting up CUDNN"
-            read -p "Download before proceeding (https://developer.nvidia.com/rdp/cudnn-download). Downloaded version [default: 7.6.5]: " version
+            spatialPrint "setting up CUDNN"
+            read -p "download before proceeding (https://developer.nvidia.com/rdp/cudnn-download). Downloaded version [default: 7.6.5]: " version
             version=${version:-"7.6.5"}
             v=$(printf %.1s "$version")
             if [ ! -f ./misc/cudnn.tgz ]; then
@@ -99,26 +99,22 @@ if which nvidia-smi > /dev/null; then
         cd ../../
         rm -rf ./nvtop/
     fi
-    spatialPrint "nvidia-docker"
-    distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-    execute sudo apt-get update
-    execute sudo apt-get install -y nvidia-container-toolkit
-    execute sudo systemctl restart docker
+
+    spatialPrint "install pytorch"
+    PIP="pip3 install --user"
+    read -p "(https://pytorch.org/get-started/locally/) d(default) / c(custom) / s(skip): " tempvar
+    tempvar=${tempvar:-s}
+    if [ "$tempvar" = "d" ]; then
+        execute $PIP torch torchvision torchaudio
+    elif [ "$tempvar" = "c" ]; then
+        read -p "pip3 install --user (fill rest)" tempvar
+        execute $PIP $tempvar
+    fi
+    spatialPrint "check pytorch installation"
+    python3 ./test_torch.py
+
+    spatialPrint "script finished!"
+else
+    spatialPrint "nvidia drivers NOT installed, install before running this script!"
 fi
 
-spatialPrint "Install pytorch"
-PIP="pip3 install --user"
-read -p "(https://pytorch.org/get-started/locally/) d(default) / c(custom) / s(skip): " tempvar
-tempvar=${tempvar:-s}
-if [ "$tempvar" = "d" ]; then
-    execute $PIP torch torchvision torchaudio
-elif [ "$tempvar" = "c" ]; then
-    read -p "pip3 install --user " tempvar
-    execute $PIP $tempvar
-fi
-spatialPrint "Check pytorch installation"
-python3 ./test_torch.py
-
-spatialPrint "script finished!"
