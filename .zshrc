@@ -106,3 +106,25 @@ function extract() {
         ;;
     esac
 }
+
+# kubectl commands
+function kstatus {
+    kubectl get pods | grep "$1"
+}
+alias kmystatus="kubectl get pods | grep 'mukund'"
+function kpod {
+    kubectl create -f $1
+}
+alias kmypod="kubectl create -f ~/dotfiles/misc/pod_2080.yaml"
+function kjob {
+    kubectl create -f $1
+}
+alias kmyjob="kubectl create -f ~/dotfiles/misc/job_2080.yaml"
+function kssh {
+    kubectl exec -it $1 -- bash
+}
+alias ksshmypod="kubectl exec -it mukund-debug-2080 -- bash"
+alias kdelmypod="kubectl delete pod mukund-debug-2080"
+alias kdelpod="kubectl delete pod "
+alias klogmypod="kubectl logs -f mukund-debug-2080"
+alias klogpod="kubectl logs -f "
