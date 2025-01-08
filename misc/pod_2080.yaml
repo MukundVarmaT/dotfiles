@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mukund-debug-2080
+  namespace: ucsd-haosulab
+  labels:
+    user: mukund  # replace with your name
+spec:
+  containers:
+  - name: gpu-container
+    image:  liuminghua/3d_clip:minkowski_1 #mutongzhou/ms2-rk:latest #haosulab/cuda9-cudnn7:latest
+    # imagePullPolicy: Always
+    #args: ["sleep", "infinity"]
+    command: ["/bin/bash"]
+    #args: ["-c", "sleep infinity"] #"apt update -y && apt install libopenblas-dev -y && export PATH=/usr/local/cuda/bin:$PATH && pip install -U git+https://github.com/NVIDIA/MinkowskiEngine --no-deps &&"
+    args: ["-c", "sleep infinity"]
+    #args: ["sleep", "infinity"]
+    #args: ["-c", "source activate /opt/conda/envs/pytorch3d && cd /cephfs/minghua/deformation-handle && python3 train.py --batch_size 128 "] #&& python3 train.py --batch_size 128
+    #args: ["-c", "source ~/.bashrc && conda activate /root/anaconda3/envs/pytorch3d"]
+    resources:
+      requests:
+        cpu: "8"
+        memory: "32Gi"
+        nvidia.com/gpu: 1
+        #ephemeral-storage: 400Gi
+      limits:
+        cpu: "8"
+        memory: "32Gi"
+        nvidia.com/gpu: 1
+        #ephemeral-storage: 400Gi
+    volumeMounts:
+      # - name: chao-fast-vol
+      #   mountPath: /chao-fast-vol
+      - name: dshm
+        mountPath: /dev/shm
+      # - name: minghua-fast-vol
+      #   mountPath: /minghua-fast-vol
+      # - name: minghua-slow-vol
+      #   mountPath: /minghua-slow-vol
+      # - name: minghua-slow-vol1
+      #   mountPath: /minghua-slow-vol1
+      - name: mukund-slow-vol
+        mountPath: /mukund-slow-vol
+      # - name: datasets-slow
+      #   mountPath: /datasets-slow
+      # - name: datasets-slow1
+      #   mountPath: /datasets-slow1
+      # - name: kaiming-fast-vol
+      #   mountPath: /kaiming-fast-vol
+      - name: objaverse-processed1
+        mountPath: /objaverse-processed1
+      #- name: datasets-slow-east
+      #  mountPath: /datasets-slow-east
+      # - name: jet-ris-vol
+      #   mountPath: /jet-ris-vol
+      # - name: data
+      #   mountPath: /mnt/data
+  volumes:
+    # - name: chao-fast-vol
+    #   persistentVolumeClaim:
+    #     claimName: chao-fast-vol
+    - name: mukund-slow-vol
+      persistentVolumeClaim:
+        claimName: mukund-slow-vol
+    # - name: minghua-slow-vol
+    #   persistentVolumeClaim:
+    #     claimName: minghua-slow-vol
+    # - name: kaiming-fast-vol
+    #   persistentVolumeClaim:
+    #     claimName: kaiming-fast-vol
+    # - name: minghua-fast-vol
+    #   persistentVolumeClaim:
+    #     claimName: minghua-fast-vol
+    # - name: minghua-slow-vol1
+    #   persistentVolumeClaim:
+    #     claimName: minghua-slow-vol1
+    # - name: datasets-slow
+    #   persistentVolumeClaim:
+    #     claimName: datasets-slow-vol
+    # - name: datasets-slow1
+    #   persistentVolumeClaim:
+    #     claimName: datasets-slow-vol1
+    - name: objaverse-processed1
+      persistentVolumeClaim:
+        claimName: objaverse-processed1
+
+    #- name: datasets-slow-east
+    #  persistentVolumeClaim:
+    #    claimName: datasets-slow-east-vol
+    # - name: jet-ris-vol
+    #   persistentVolumeClaim:
+    #     claimName: jet-ris-vol
+    - name: dshm
+      emptyDir:
+        medium: Memory
+    # - name: data
+    #   emptyDir: {}
+
+  restartPolicy: Never
+  tolerations:
+    - effect: NoSchedule
+      key:  nautilus.io/nrp-testing
+      operator: Exists
+  #nodeSelector: 
+  #  kubernetes.io/hostname: "k8s-haosu-18.sdsc.optiputer.net"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          #- key: env
+          #  operator: In
+          #  values:
+          #    - nrp
+          #- key: nvidia.com/gpu.product
+          #  operator: In
+          #  values:
+          #    - NVIDIA-A100-SXM4-80GB
+              #- NVIDIA-A100-80GB-PCIe-MIG-1g.10gb
+          # - key: nautilus.io/group
+          #   operator: In
+          #   values:
+          #   - haosu
+          # - key: nvidia.com/gpu.product
+          #   operator: In
+          #   values:
+          #   - NVIDIA-GeForce-RTX-2080-Ti
+          - key: nvidia.com/gpu.product
+            operator: In
+            values:
+            - NVIDIA-A10
+            # - NVIDIA-A100-SXM4-80GB
+            # - NVIDIA-RTX-A6000

@@ -1,0 +1,183 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mukund-diffusion
+  # name: mukund-run1
+  namespace: ucsd-haosulab
+  labels:
+    user: mukund  # replace with your name
+spec:
+  ttlSecondsAfterFinished: 86400 # Wait one day to delete completed jobs
+  template:
+    spec:
+      containers:
+      - name: gpu-container
+        image:  liuminghua/3d_clip:minkowski_1 #mutongzhou/ms2-rk:latest #haosulab/cuda9-cudnn7:latest
+        # imagePullPolicy: Always
+        #args: ["sleep", "infinity"]
+        command: ["/bin/bash"]
+        #args: ["-c", "sleep infinity"] #"apt update -y && apt install libopenblas-dev -y && export PATH=/usr/local/cuda/bin:$PATH && pip install -U git+https://github.com/NVIDIA/MinkowskiEngine --no-deps &&"
+        #args: ["-c", "sleep infinity"]
+        #args: ["sleep", "infinity"]
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse && cd /mukund-slow-vol/transformer_nerf && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --expname gnt_objaversezero12345_narrow --eval_dataset objaversezero12345 --render_stride 2 --chunk_size 2048 --run_val && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --expname gnt_objaversezero12345_narrow --eval_dataset objaversezero12345 --render_stride 1 --chunk_size 2048 --run_val"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse && cd /mukund-slow-vol/transformer_nerf && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --train_dataset objaversezero12345wide --eval_dataset objaversezero12345wide --expname gnt_objaversezero12345_wide_11 --num_source_views 11 --render_stride 2 --chunk_size 2048 --run_val && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --train_dataset objaversezero12345wide --eval_dataset objaversezero12345wide --expname gnt_objaversezero12345_wide_11 --num_source_views 11 --render_stride 1 --chunk_size 2048 --run_val"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse && cd /mukund-slow-vol/transformer_nerf && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --train_dataset objaversezero12345wide --eval_dataset objaversezero12345wide --expname gnt_objaversezero12345_wide_35 --num_source_views 35 --render_stride 2 --chunk_size 2048 --run_val && python3 -u eval_transibr.py --config configs/gnt_objaverse_narrow_eval.txt --train_dataset objaversezero12345wide --eval_dataset objaversezero12345wide --expname gnt_objaversezero12345_wide_35 --num_source_views 35 --render_stride 1 --chunk_size 2048 --run_val"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp --dino_stride 16 --chunk_size 512 --render_stride 4"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi --dino_stride 16 --chunk_size 512 --render_stride 4 --multiple_feat_models True --i_weights 20000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi_pureattn --dino_stride 16 --chunk_size 512 --render_stride 4 --multiple_feat_models True --pure_attn True --i_weights 20000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi_pureattn_gate --dino_stride 16 --chunk_size 512 --render_stride 4 --multiple_feat_models True --pure_attn True --i_weights 20000 --posenc_mode gate"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train_withdisc.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi_adv --dino_stride 16 --chunk_size 512 --render_stride 4 --multiple_feat_models True --i_weights 20000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi --chunk_size 512 --render_stride 4 --augment True --i_weights 20000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train_768.py --config configs/transibr_bigger_full.txt --N_rand 64 --expname feat_interp_multi_768 --chunk_size 256 --render_stride 8 --augment True --i_weights 20000 --N_samples 128 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && sh render_llff.sh"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train_sam.py --config configs/transibr_bigger_full.txt --N_rand 64 --expname feat_interp_sam --chunk_size 256 --render_stride 8 --i_weights 20000 --N_samples 128 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train_sam_multi.py --config configs/transibr_bigger_full.txt --N_rand 64 --expname feat_interp_sam_multi --chunk_size 128 --render_stride 8 --i_weights 20000 --N_samples 128 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train_sam_multi.py --config configs/transibr_bigger_full.txt --N_rand 256 --expname feat_interp_sam_multi_bigger --chunk_size 128 --render_stride 8 --i_weights 20000 --N_samples 192 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train_sam_multi.py --config configs/transibr_bigger_full.txt --N_rand 128 --expname feat_interp_sam_multi_bigger_rgb --chunk_size 128 --render_stride 8 --i_weights 20000 --N_samples 192 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train_sam_multi.py --config configs/transibr_bigger_full.txt --N_rand 256 --expname feat_interp_sam_multi_bigger_simplergb --chunk_size 128 --render_stride 8 --i_weights 10000 --N_samples 192 --netwidth 768 --i_img 200000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=5 --use_env --master_port=2122 train_sam_multi.py --config configs/transibr_bigger_full.txt --N_rand 64 --expname feat_interp_sam_multi_bigger_moreenc --chunk_size 128 --render_stride 8 --i_weights 10000 --N_samples 128 --netwidth 768 --i_img 250000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train_sam_multi_disent.py --config configs/transibr_bigger_full.txt --N_rand 128 --expname feat_interp_sam_multi_bigger_moreenc_disent_2 --chunk_size 128 --render_stride 8 --i_weights 10000 --N_samples 128 --netwidth 768 --i_img 250000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=3 --use_env --master_port=2122 train_sam_multi_disent.py --config configs/transibr_bigger_full.txt --N_rand 144 --expname feat_interp_sam_multi_bigger_moreenc_disent_3 --chunk_size 128 --render_stride 8 --i_weights 10000 --N_samples 192 --netwidth 768 --i_img 250000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/gnt_feature_interpolator && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=2 --use_env --master_port=2122 train_sam_multi_disent.py --config configs/transibr_bigger_full.txt --N_rand 144 --expname feat_interp_sam_multi_bigger_moreenc_disent_4 --chunk_size 128 --render_stride 8 --i_weights 10000 --N_samples 192 --netwidth 768 --i_img 250000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/IBRNet && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train.py --config configs/pretrain.txt --expname ibrnet_feat_interp_larger --chunk_size 128 --render_stride 4 --i_weights 25000 --i_img 500000 --N_rand 256"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia && cd /mukund-slow-vol/IBRNet && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train.py --config configs/pretrain.txt --expname ibrnet_feat_interp_larger_dir --chunk_size 128 --render_stride 4 --i_weights 25000 --i_img 500000 --N_rand 256 --use_dir"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia ftfy regex && cd /mukund-slow-vol/IBRNet && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train.py --config configs/pretrain.txt --expname ibrnet_feat_interp_twostage_dinoclip --chunk_size 128 --render_stride 4 --i_weights 25000 --i_img 500000 --N_rand 256"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia ftfy regex && cd /mukund-slow-vol/IBRNet && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train_new_blend.py --config configs/pretrain.txt --expname ibrnet_feat_interp_twostage_dinoclip_newblend --chunk_size 128 --render_stride 4 --i_weights 25000 --i_img 500000 --N_rand 256"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm kornia ftfy regex && cd /mukund-slow-vol/IBRNet && python3 load_dino.py && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=8 --use_env --master_port=2122 train_new_blend_sigm.py --config configs/pretrain.txt --expname ibrnet_feat_interp_twostage_dinoclip_newblend_sigm --chunk_size 128 --render_stride 4 --i_weights 25000 --i_img 500000 --N_rand 256"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "cd /mukund-slow-vol/edm && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train.py --outdir=training-runs --data=datasets/cifar10-32x32.zip --cond=1 --arch=ncsnpp --precond=ve --batch=512 --tb"] #&& python3 train.py --batch_size 128
+        args: ["-c", "cd /mukund-slow-vol/wddpm/ddpm-torch && python3 -u train.py --dataset celeba_hq --root ./datasets --num-gpus 6 --distributed --rigid-launch --num-accum 2"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm opencv-contrib-python && cd /mukund-slow-vol/WaterNeRF && sh run1.sh && sh run1.sh && sh run1.sh && sh run1.sh"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-pytkhon lpips imageio-ffmpeg imageio[pyav] configargparse timm opencv-contrib-python && cd /mukund-slow-vol/WaterNeRF && sh run2.sh && sh run2.sh && sh run2.sh && sh run2.sh"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm opencv-contrib-python && cd /mukund-slow-vol/WaterNeRF && sh run3.sh && sh run3.sh && sh run3.sh && sh run3.sh"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm opencv-contrib-python && cd /mukund-slow-vol/WaterNeRF && sh run4.sh && sh run4.sh && sh run4.sh && sh run4.sh"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/ibrnet_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=4 --use_env --master_port=2122 train.py --config configs/pretrain.txt --N_rand 1000 --expname feat_interp_multi --augment True --i_weights 20000"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_multi_weights --dino_stride 16 --chunk_size 512 --render_stride 4 --multiple_feat_models True --predict_weights True"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_weights --dino_stride 16 --chunk_size 512 --render_stride 4 --predict_weights True"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_cont --dino_stride 16 --use_cont True  --chunk_size 512 --render_stride 4"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "pip install opencv-python lpips imageio-ffmpeg imageio[pyav] configargparse timm && cd /mukund-slow-vol/gnt_feature_interpolator && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_rgb --dino_stride 16 --use_rgb True --chunk_size 512 --render_stride 4 && python3 -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=6 --use_env --master_port=2122 train.py --config configs/transibr_bigger_full.txt --N_rand 100 --expname feat_interp_rgb_cont --dino_stride 16 --use_cont True --use_rgb True --chunk_size 512 --render_stride 4"] #&& python3 train.py --batch_size 128
+        # args: ["-c", "cd /mukund-slow-vol/gnt_feature_interpolator/data && rm -rf google_scanned_objects && unzip google_scanned_objects_renderings.zip"] #&& python3 train.py --batch_size 128
+        #args: ["-c", "source activate /opt/conda/envs/pytorch3d && cd /cephfs/minghua/deformation-handle && python3 train.py --batch_size 128 "] #&& python3 train.py --batch_size 128
+        #args: ["-c", "source ~/.bashrc && conda activate /root/anaconda3/envs/pytorch3d"]
+        resources:
+          requests:
+            cpu: "16"
+            memory: "64Gi"
+            nvidia.com/gpu: 6
+            # cpu: "16"
+            # memory: "32Gi"
+            # nvidia.com/gpu: 1
+            #ephemeral-storage: 400Gi
+          limits:
+            cpu: "16"
+            memory: "64Gi"
+            nvidia.com/gpu: 6
+            # cpu: "16"
+            # memory: "32Gi"
+            # nvidia.com/gpu: 1
+            #ephemeral-storage: 400Gi
+        volumeMounts:
+          - name: dshm
+            mountPath: /dev/shm
+          # - name: minghua-fast-vol
+          #   mountPath: /minghua-fast-vol
+          # - name: minghua-slow-vol
+          #   mountPath: /minghua-slow-vol
+          # - name: minghua-slow-vol1
+          #   mountPath: /minghua-slow-vol1
+          - name: mukund-slow-vol
+            mountPath: /mukund-slow-vol
+          # - name: datasets-slow
+          #   mountPath: /datasets-slow
+          # - name: datasets-slow1
+          #   mountPath: /datasets-slow1
+          # - name: kaiming-fast-vol
+          #   mountPath: /kaiming-fast-vol
+          # - name: objaverse-processed
+          #   mountPath: /objaverse-processed
+          #- name: datasets-slow-east
+          #  mountPath: /datasets-slow-east
+          # - name: jet-ris-vol
+          #   mountPath: /jet-ris-vol
+          # - name: data
+          #   mountPath: /mnt/data
+      volumes:
+        - name: mukund-slow-vol
+          persistentVolumeClaim:
+            claimName: mukund-slow-vol
+        # - name: minghua-slow-vol
+        #   persistentVolumeClaim:
+        #     claimName: minghua-slow-vol
+        # - name: kaiming-fast-vol
+        #   persistentVolumeClaim:
+        #     claimName: kaiming-fast-vol
+        # - name: minghua-fast-vol
+        #   persistentVolumeClaim:
+        #     claimName: minghua-fast-vol
+        # - name: minghua-slow-vol1
+        #   persistentVolumeClaim:
+        #     claimName: minghua-slow-vol1
+        # - name: datasets-slow
+        #   persistentVolumeClaim:
+        #     claimName: datasets-slow-vol
+        # - name: datasets-slow1
+        #   persistentVolumeClaim:
+        #     claimName: datasets-slow-vol1
+        # - name: objaverse-processed
+        #   persistentVolumeClaim:
+        #     claimName: objaverse-processed
+
+        #- name: datasets-slow-east
+        #  persistentVolumeClaim:
+        #    claimName: datasets-slow-east-vol
+        # - name: jet-ris-vol
+        #   persistentVolumeClaim:
+        #     claimName: jet-ris-vol
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        # - name: data
+        #   emptyDir: {}
+
+      restartPolicy: Never
+      tolerations:
+        - effect: NoSchedule
+          key:  nautilus.io/nrp-testing
+          operator: Exists
+      #nodeSelector:
+      #  kubernetes.io/hostname: "k8s-haosu-18.sdsc.optiputer.net"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              #- key: env
+              #  operator: In
+              #  values:
+              #    - nrp
+              #- key: nvidia.com/gpu.product
+              #  operator: In
+              #  values:
+              #    - NVIDIA-A100-SXM4-80GB
+                  #- NVIDIA-A100-80GB-PCIe-MIG-1g.10gb
+              # - key: nautilus.io/group
+              #   operator: In
+              #   values:
+              #   - haosu
+              # - key: nvidia.com/gpu.product
+              #   operator: In
+              #   values:
+              #   - NVIDIA-GeForce-RTX-3090
+              # - key: nautilus.io/group
+              #   operator: In
+              #   values:
+              #   - haosu
+              # - key: nvidia.com/gpu.product
+              #   operator: In
+              #   values:
+              #   - NVIDIA-GeForce-RTX-2080-Ti
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-A10
+                # - NVIDIA-A100-SXM4-80GB
+                # - NVIDIA-RTX-A4000
